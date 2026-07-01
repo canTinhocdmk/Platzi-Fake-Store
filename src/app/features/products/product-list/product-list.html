@@ -1,0 +1,97 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Produtos</span>
+    <h2>Catalogo da loja</h2>
+    <p>{{ visibleProducts().length }} registros visiveis</p>
+  </div>
+
+  <a class="button primary" routerLink="/products/new">Novo produto</a>
+</section>
+
+@if (message()) {
+  <div class="notice">
+    <span>{{ message() }}</span>
+    <button class="button ghost small" type="button" (click)="message.set('')">Ok</button>
+  </div>
+}
+
+<form class="filters" [formGroup]="filters">
+  <label class="field">
+    <span>Titulo</span>
+    <input type="search" formControlName="title" placeholder="Pesquisar produto" />
+  </label>
+
+  <label class="field">
+    <span>Categoria</span>
+    <select formControlName="categoryId">
+      <option [ngValue]="null">Todas</option>
+      @for (category of categories(); track category.id) {
+        <option [ngValue]="category.id">{{ category.name }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="field">
+    <span>Preco minimo</span>
+    <input type="number" formControlName="priceMin" min="0" placeholder="0" />
+  </label>
+
+  <label class="field">
+    <span>Preco maximo</span>
+    <input type="number" formControlName="priceMax" min="0" placeholder="500" />
+  </label>
+
+  <button class="button ghost" type="button" (click)="resetFilters()" [disabled]="loading()">
+    Limpar
+  </button>
+</form>
+
+@if (loading()) {
+  <div class="state-panel">
+    <strong>Carregando produtos...</strong>
+    <p>Buscando registros atualizados do catalogo.</p>
+  </div>
+} @else if (error()) {
+  <div class="state-panel">
+    <strong>{{ error() }}</strong>
+    <p>Verifique a conexao e tente novamente.</p>
+  </div>
+} @else {
+  <div class="product-grid">
+    @for (product of visibleProducts(); track product.id) {
+      <article class="product-card">
+        <img
+          [src]="cover(product)"
+          [alt]="product.title"
+          referrerpolicy="no-referrer"
+          (error)="imageFallback($event, product.id)"
+        />
+
+        <div class="product-body">
+          <div>
+            <span class="tag">{{ product.category.name }}</span>
+            <h3>{{ product.title }}</h3>
+            <p>{{ product.description }}</p>
+          </div>
+
+          <div class="product-footer">
+            <strong>{{ product.price | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+            <div class="actions">
+              <a class="button ghost small" [routerLink]="['/products', product.id, 'edit']">
+                Editar
+              </a>
+              <button class="button danger small" type="button" (click)="deleteProduct(product)">
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <div class="state-panel">
+        <strong>Nenhum produto encontrado.</strong>
+        <p>Ajuste os filtros para ampliar a busca.</p>
+      </div>
+    }
+  </div>
+}

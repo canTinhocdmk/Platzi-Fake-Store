@@ -1,0 +1,68 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Categorias</span>
+    <h2>Organizacao do catalogo</h2>
+    <p>{{ filteredCategories().length }} registros visiveis</p>
+  </div>
+
+  <a class="button primary" routerLink="/categories/new">Nova categoria</a>
+</section>
+
+@if (message()) {
+  <div class="notice">
+    <span>{{ message() }}</span>
+    <button class="button ghost small" type="button" (click)="message.set('')">Ok</button>
+  </div>
+}
+
+<form class="filters category-filter">
+  <label class="field">
+    <span>Pesquisar</span>
+    <input type="search" [formControl]="search" placeholder="Nome ou slug da categoria" />
+  </label>
+
+  <button class="button ghost" type="button" (click)="resetSearch()">Limpar</button>
+</form>
+
+@if (loading()) {
+  <div class="state-panel">
+    <strong>Carregando categorias...</strong>
+    <p>Buscando grupos atualizados do catalogo.</p>
+  </div>
+} @else if (error()) {
+  <div class="state-panel">
+    <strong>{{ error() }}</strong>
+    <p>Verifique a conexao e tente novamente.</p>
+  </div>
+} @else {
+  <div class="category-grid">
+    @for (category of filteredCategories(); track category.id) {
+      <article class="category-card">
+        <img
+          [src]="category.image"
+          [alt]="category.name"
+          referrerpolicy="no-referrer"
+          (error)="imageFallback($event, category.id)"
+        />
+        <div>
+          <span class="tag">#{{ category.id }}</span>
+          <h3>{{ category.name }}</h3>
+          <p>{{ category.slug ?? 'sem-slug' }}</p>
+          <div class="actions">
+            <a class="button ghost small" [routerLink]="['/categories', category.id, 'edit']">
+              Editar
+            </a>
+            <button class="button danger small" type="button" (click)="deleteCategory(category)">
+              Excluir
+            </button>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <div class="state-panel">
+        <strong>Nenhuma categoria encontrada.</strong>
+        <p>Ajuste o filtro para ampliar a busca.</p>
+      </div>
+    }
+  </div>
+}

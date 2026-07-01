@@ -1,0 +1,57 @@
+<main class="login-page">
+  <section class="login-visual" aria-label="Platzi Fake Store">
+    <div class="brand-row">
+      <span class="brand-mark">FS</span>
+      <span>
+        <strong>Fake Store Admin</strong>
+        <small>Painel de catalogo</small>
+      </span>
+    </div>
+
+    <div class="metrics">
+      <article>
+        <strong>Produtos</strong>
+        <span>Catalogo ativo</span>
+      </article>
+      <article>
+        <strong>Categorias</strong>
+        <span>Pesquisa rapida</span>
+      </article>
+      <article>
+        <strong>Acesso</strong>
+        <span>Area segura</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="auth-card">
+    <span class="eyebrow">Acesso restrito</span>
+    <h1>Entrar no painel</h1>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" autocomplete="username" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <small class="error">Informe um email valido.</small>
+        }
+      </label>
+
+      <label class="field">
+        <span>Senha</span>
+        <input type="password" formControlName="password" autocomplete="current-password" />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <small class="error">Informe a senha.</small>
+        }
+      </label>
+
+      @if (error()) {
+        <p class="login-error">{{ error() }}</p>
+      }
+
+      <button class="button primary" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Autenticando...' : 'Entrar' }}
+      </button>
+    </form>
+  </section>
+</main>

@@ -1,0 +1,59 @@
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/products" aria-label="Fake Store Admin">
+      <span class="brand-mark">FS</span>
+      <span>
+        <strong>Fake Store</strong>
+        <small>Admin</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <div class="workspace">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">Painel administrativo</span>
+        <h1>Gestao de catalogo</h1>
+      </div>
+
+      <div class="profile">
+        @if (auth.profile(); as profile) {
+          <img
+            [src]="profile.avatar"
+            [alt]="profile.name"
+            referrerpolicy="no-referrer"
+            (error)="profileImageFallback($event)"
+          />
+          <span>
+            <strong>{{ profile.name }}</strong>
+            <small>{{ profile.email }}</small>
+          </span>
+        } @else {
+          <span class="avatar">{{ initials() }}</span>
+          <span>
+            <strong>Sessao ativa</strong>
+            <small>Acesso protegido</small>
+          </span>
+        }
+
+        <button class="button ghost small" type="button" (click)="logout()">Sair</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<section class="form-page">
+  <div class="form-title">
+    <span class="eyebrow">Produtos</span>
+    <h2>{{ title() }}</h2>
+    <p>Preencha os dados e revise a previa antes de salvar.</p>
+  </div>
+
+  @if (message()) {
+    <div class="notice">
+      <span>{{ message() }}</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="state-panel">
+      <strong>{{ error() }}</strong>
+      <p>Volte para a listagem e escolha outro registro.</p>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state-panel">
+      <strong>Carregando produto...</strong>
+    </div>
+  } @else {
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <div class="fields">
+          <label class="field">
+            <span>Titulo</span>
+            <input type="text" formControlName="title" />
+            @if (fieldInvalid('title')) {
+              <small class="error">Informe ao menos 3 caracteres.</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Preco</span>
+            <input type="number" formControlName="price" min="1" />
+            @if (fieldInvalid('price')) {
+              <small class="error">Informe um preco maior que zero.</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Categoria</span>
+            <select formControlName="categoryId">
+              <option [ngValue]="null">Selecione</option>
+              @for (category of categories(); track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+              }
+            </select>
+            @if (fieldInvalid('categoryId')) {
+              <small class="error">Selecione uma categoria.</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Imagem</span>
+            <input type="url" formControlName="image" />
+            @if (fieldInvalid('image')) {
+              <small class="error">Informe uma URL valida.</small>
+            }
+          </label>
+
+          <label class="field full">
+            <span>Descricao</span>
+            <textarea formControlName="description"></textarea>
+            @if (fieldInvalid('description')) {
+              <small class="error">Informe ao menos 10 caracteres.</small>
+            }
+          </label>
+        </div>
+
+        <aside class="preview-panel">
+          <img
+            [src]="form.controls.image.value || fallbackImage"
+            alt="Preview do produto"
+            referrerpolicy="no-referrer"
+            (error)="imageFallback($event)"
+          />
+          <h3>{{ form.controls.title.value || 'Produto sem titulo' }}</h3>
+          <p>{{ form.controls.description.value || 'Descricao do produto' }}</p>
+          <strong>{{ form.controls.price.value || 0 | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+        </aside>
+      </div>
+
+      <div class="form-footer">
+        <a class="button ghost" routerLink="/products">Cancelar</a>
+        <button class="button primary" type="submit">{{ actionLabel() }}</button>
+      </div>
+    </form>
+  }
+</section>

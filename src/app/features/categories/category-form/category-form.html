@@ -1,0 +1,64 @@
+<section class="form-page">
+  <div class="form-title">
+    <span class="eyebrow">Categorias</span>
+    <h2>{{ title() }}</h2>
+    <p>Preencha os dados e revise a previa antes de salvar.</p>
+  </div>
+
+  @if (message()) {
+    <div class="notice">
+      <span>{{ message() }}</span>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="state-panel">
+      <strong>{{ error() }}</strong>
+      <p>Volte para a listagem e escolha outro registro.</p>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state-panel">
+      <strong>Carregando categoria...</strong>
+    </div>
+  } @else {
+    <form class="form-panel" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <div class="fields">
+          <label class="field">
+            <span>Nome</span>
+            <input type="text" formControlName="name" />
+            @if (fieldInvalid('name')) {
+              <small class="error">Informe ao menos 3 caracteres.</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Imagem</span>
+            <input type="url" formControlName="image" />
+            @if (fieldInvalid('image')) {
+              <small class="error">Informe uma URL valida.</small>
+            }
+          </label>
+        </div>
+
+        <aside class="preview-panel">
+          <img
+            [src]="form.controls.image.value || fallbackImage"
+            alt="Preview da categoria"
+            referrerpolicy="no-referrer"
+            (error)="imageFallback($event)"
+          />
+          <h3>{{ form.controls.name.value || 'Categoria sem nome' }}</h3>
+          <p>Identificador amigavel gerado automaticamente em uma gravacao real.</p>
+        </aside>
+      </div>
+
+      <div class="form-footer">
+        <a class="button ghost" routerLink="/categories">Cancelar</a>
+        <button class="button primary" type="submit">{{ actionLabel() }}</button>
+      </div>
+    </form>
+  }
+</section>
